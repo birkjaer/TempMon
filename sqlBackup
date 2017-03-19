@@ -1,0 +1,10 @@
+#!/bin/bash
+# Backing up MySQL database Monitoring with Temperature and Humidity readings
+
+mysqldump -p300983Ab --databases Monitoring > Monitoring_SQL_backup.sql
+scp Monitoring_SQL_backup.sql root@raspmail:/hdmnt/Backup/LivingRoomTempHumidBackupData.sql
+if [ $? -ne 0 ];
+then
+    logger "$0 - MySQL Backup failed"
+    echo "ERROR"
+fi

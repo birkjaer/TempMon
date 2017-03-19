@@ -1,0 +1,15 @@
+apache2 php5 mysql-client mysql-server vsftpd
+
+libblas-dev liblapack-dev python-dev libatlas-base-dev gfortran python-setuptools python-scipy python-matplotlib
+python-mysqldb
+MySQL-python
+libmysqlclient-dev
+
+Note: Wiringpi, originating from: git clone git://git.drogon.net/wiringPi
+
+crontab -e
+*/5 * * * * python /home/andreas/GraphTH/GraphTH.py >> /home/andreas/GraphTH.log
+
+etc/rc.local:
+sleep 10
+/home/andreas/GraphTH/th >> /home/andreas/GraphTH/th.log &
