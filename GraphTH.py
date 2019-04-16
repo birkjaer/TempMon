@@ -186,10 +186,18 @@ FileName = '/home/andreas/TempMon/graphics/LivingRoom_01y.png'
 plt.savefig(FileName)
 
 print 'Copy to Web Server...',
-os.system("scp /home/andreas/TempMon/graphics/LivingRoom_30m.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_30m.png")
-os.system("scp /home/andreas/TempMon/graphics/LivingRoom_24h.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_24h.png")
-os.system("scp /home/andreas/TempMon/graphics/LivingRoom_30d.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_30d.png")
-os.system("scp /home/andreas/TempMon/graphics/LivingRoom_01y.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_01y.png")
+ret1 = os.system("scp /home/andreas/TempMon/graphics/LivingRoom_30m.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_30m.png")
+ret2 = os.system("scp /home/andreas/TempMon/graphics/LivingRoom_24h.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_24h.png")
+ret3 = os.system("scp /home/andreas/TempMon/graphics/LivingRoom_30d.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_30d.png")
+ret4 = os.system("scp /home/andreas/TempMon/graphics/LivingRoom_01y.png andreas@raspmail:/var/www/photoshow/graphics/LivingRoom_01y.png")
+if ret1 is not 0:
+    print 'Error copying 1',ret1
+if ret2 is not 0:
+    print 'Error copying 2',ret2
+if ret3 is not 0:
+    print 'Error copying 3',ret3
+if ret4 is not 0:
+    print 'Error copying 4',ret4
 print 'Done at',time.asctime()
 
 

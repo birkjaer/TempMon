@@ -16,6 +16,7 @@ rev 1.79 12/04/2013 WPNS release to instructables
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <wiringPi.h>
 #include <maxdetect.h>
@@ -26,6 +27,7 @@ rev 1.79 12/04/2013 WPNS release to instructables
 #define	RHT03_PIN	7
 #define CYCLETIME      60
 #define RETRIES         3
+#define MAX_LINE_LEN   20
 
 void finish_with_error(MYSQL *con)
 {
@@ -33,6 +35,38 @@ void finish_with_error(MYSQL *con)
   mysql_close(con);
   exit(1);
 }
+
+
+int get_account_from_file(char *user, char *password)
+{
+  FILE *fp;
+  char buf[MAX_LINE_LEN];
+  fp = fopen("/home/andreas/TempMon/db_pass.conf", "r");
+
+  //Skip first line
+  if(fgets(buf, MAX_LINE_LEN, fp) == NULL)
+    return -1;
+
+  //Get username
+  if(fgets(buf, MAX_LINE_LEN, fp) == NULL)
+    return -2;
+  char *pch1 = strchr(buf, '=');
+  if(!pch1)
+    return -3;
+  strncpy(user, pch1+1, (strlen(buf) - (pch1-buf+1)));
+  user[pch1-buf] = '\0';
+
+  //Get password
+  if(fgets(buf, MAX_LINE_LEN, fp) == NULL)
+    return -4;
+  char *pch2 = strchr(buf, '=');
+  if(!pch2)
+    return -5;
+  strncpy(password, pch2+1, (strlen(buf) - (pch2-buf+1)));
+  password[pch2-buf] = '\0';
+  return 0;
+}
+
 
 /*
  ***********************************************************************
@@ -54,6 +88,10 @@ int main (void)
 
   int status;                   // how did the read go?
 
+  char user[MAX_LINE_LEN];
+  user[0] = '\0';
+  char pass[MAX_LINE_LEN];
+  pass[0] = '\0';
   temp = rh = loop = 0 ;
   oldtime = (int)time(NULL);
 
@@ -63,11 +101,18 @@ int main (void)
   printf("rh.c rev 1.79 12/04/2013 WPNS %sCycle time: %i seconds, %i retries\n",ctime(&oldtime),CYCLETIME,RETRIES);
   fflush(stdout);
 
+  int ret = get_account_from_file(user, pass);
+  if(ret != 0)
+  {
+    printf("Error reading file (%d)", ret);
+    exit(1);
+  }
+
   MYSQL *con = mysql_init(NULL);
 
   if (con == NULL) finish_with_error(con);
 
-  if (mysql_real_connect(con, "localhost", "root", "300983Ab", 
+  if (mysql_real_connect(con, "localhost", user, pass,
 			 "Monitoring", 0, NULL, 0) == NULL) finish_with_error(con);
 
   // wait for an interval to start and end
